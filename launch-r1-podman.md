@@ -44,6 +44,80 @@ volumes:
   open-webui:
 ```
 
+====== VERSION 2 "==========
+```
+version: '3.8'
+
+
+
+services:
+
+  ollama:
+
+    image: ollama/ollama
+
+    container_name: ollama
+
+    restart: unless-stopped
+
+    ports:
+
+      - "11434:11434"
+
+    entrypoint: ["ollama", "serve"]
+
+    devices:
+
+      - "/dev/dri:/dev/dri"
+
+    security_opt:
+
+      - "label=disable"
+
+    environment:
+
+      - NVIDIA_VISIBLE_DEVICES=all
+
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+    volumes:
+
+      - ollama_data:/root/.ollama
+
+
+
+  open-webui:
+
+    image: ghcr.io/open-webui/open-webui:main
+
+    container_name: open-webui
+
+    restart: unless-stopped
+
+    depends_on:
+
+      - ollama
+
+    ports:
+
+      - "3000:8080"
+
+    volumes:
+
+      - open-webui:/app/backend/data
+
+    extra_hosts:
+
+      - "host.docker.internal:host-gateway"
+
+
+
+volumes:
+
+  ollama_data:
+
+  open-webui:
+```
 ---
 
 ## 2. Start Everything
